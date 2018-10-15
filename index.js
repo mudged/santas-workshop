@@ -8,7 +8,7 @@ const GENERAL_FALLBACK = [
     "I'm really sorry, I can't understand. Just ask to check a name on the Naughty or Nice list. Or help Santa by letting him know if someone has been bad or good."
 ];
 const NAMES = [
-    "Anna", "Olivia", "Sophia", "Amelia", "Lily", "Emily", "Ava", "Isla", "Aria", "Mia", "Isabella", "Isabelle", "Ella", "Charlotte", "Grace", "Evie", "Maya", "Harper", "Sophie", "Layla", "Freya", 
+    "Anna", "Olivia", "Sophia", "Amelia", "Lily", "Emily", "Ava", "Isla", "Aria", "Mia", "Isabella", "Isabelle", "Ella", "Grace", "Evie", "Maya", "Harper", "Sophie", "Layla", "Freya", 
     "Dan", "Oliver", "Noah", "George", "Harry", "Leo", "Charlie", "Jack", "Freddie", "Alfie", "Oscar", "Arthur", "Henry", "Jacob", "Archie", "Joshua", "Theo", "Ethan", "Lucas", "Logan"];
 const LISTS = ["bad", "good", "naughty", "nice"];
 const OneMonthAgoInMillis = (30 * 24 * 60 * 60 * 1000);
