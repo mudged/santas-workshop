@@ -7,6 +7,10 @@ const GENERAL_FALLBACK = [
     "I didn't quite get that. Just ask to check a name on the Naughty or Nice list. Or help Santa by letting him know if someone has been bad or good.",
     "I'm really sorry, I can't understand. Just ask to check a name on the Naughty or Nice list. Or help Santa by letting him know if someone has been bad or good."
 ];
+const NAMES = [
+    "Anna", "Olivia", "Sophia", "Amelia", "Lily", "Emily", "Ava", "Isla", "Aria", "Mia", "Isabella", "Isabelle", "Ella", "Charlotte", "Grace", "Evie", "Maya", "Harper", "Sophie", "Layla", "Freya", 
+    "Dan", "Oliver", "Noah", "George", "Harry", "Leo", "Charlie", "Jack", "Freddie", "Alfie", "Oscar", "Arthur", "Henry", "Jacob", "Archie", "Joshua", "Theo", "Ethan", "Lucas", "Logan"];
+const LISTS = ["bad", "good", "naughty", "nice"];
 const OneMonthAgoInMillis = (30 * 24 * 60 * 60 * 1000);
 
 const functions = require('firebase-functions');
@@ -58,6 +62,14 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
             speech: speech,
             text: displayText
         }));
+
+        // suggestions
+        if (conv.surface.capabilities.has("actions.capability.SCREEN_OUTPUT"))
+        {
+            conv.ask(new Suggestions("Has " + getRandomName() + " been " + getRandomList()));
+            conv.ask(new Suggestions(getRandomName() + " has been " + getRandomList()));
+        }
+
         agent.add(conv);
     }
 
@@ -67,7 +79,14 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
         if (conv.data.fallbackCount >= GENERAL_FALLBACK.length) {
             conv.close("Sorry, I still don't understand. Let stop here and try again later");
         } else {
-            conv.add(GENERAL_FALLBACK[conv.data.fallbackCount]);
+            conv.ask(GENERAL_FALLBACK[conv.data.fallbackCount]);
+
+            // suggestions
+            if (conv.surface.capabilities.has("actions.capability.SCREEN_OUTPUT"))
+            {
+                conv.ask(new Suggestions("Has " + getRandomName() + " been " + getRandomList()));
+                conv.ask(new Suggestions(getRandomName() + " has been " + getRandomList()));
+            }
         }
 
         // increment fallback count
@@ -101,11 +120,18 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
         console.log(responseText);
 
         conv.ask(responseText);
-        agent.add(responseText);
+
+        // suggestions
+        if (conv.surface.capabilities.has("actions.capability.SCREEN_OUTPUT"))
+        {
+            conv.ask(new Suggestions("Has " + getRandomName() + " been " + getRandomList()));
+            conv.ask(new Suggestions(getRandomName() + " has been " + getRandomList()));
+        }
+
+        agent.add(conv);
     }
 
     function updateList(agent) {
-
 	let name = agent.parameters.name;
 	let santaName = agent.parameters.santaName;
 	let listType = agent.parameters.listType;
@@ -189,34 +215,13 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
         return 'nice';
     }
 
-    // // Uncomment and edit to make your own intent handler
-    // // uncomment `intentMap.set('your intent name here', yourFunctionHandler);`
-    // // below to get this function to be run when a Dialogflow intent is matched
-    // function yourFunctionHandler(agent) {
-    //   agent.add(`This message is from Dialogflow's Cloud Functions for Firebase editor!`);
-    //   agent.add(new Card({
-    //       title: `Title: this is a card title`,
-    //       imageUrl: 'https://developers.google.com/actions/images/badges/XPM_BADGING_GoogleAssistant_VER.png',
-    //       text: `This is the body text of a card.  You can even use line\n  breaks and emoji! 💁`,
-    //       buttonText: 'This is a button',
-    //       buttonUrl: 'https://assistant.google.com/'
-    //     })
-    //   );
-    //   agent.add(new Suggestion(`Quick Reply`));
-    //   agent.add(new Suggestion(`Suggestion`));
-    //   agent.setContext({ name: 'weather', lifespan: 2, parameters: { city: 'Rome' }});
-    // }
+    function getRandomName() {
+        return NAMES[Math.floor(Math.random() * NAMES.length)];
+    }
 
-    // // Uncomment and edit to make your own Google Assistant intent handler
-    // // uncomment `intentMap.set('your intent name here', googleAssistantHandler);`
-    // // below to get this function to be run when a Dialogflow intent is matched
-    // function googleAssistantHandler(agent) {
-    //   let conv = agent.conv(); // Get Actions on Google library conv instance
-    //   conv.ask('Hello from the Actions on Google client library!') // Use Actions on Google library
-    //   agent.add(conv); // Add Actions on Google library responses to your agent's response
-    // }
-    // // See https://github.com/dialogflow/dialogflow-fulfillment-nodejs/tree/master/samples/actions-on-google
-    // // for a complete Dialogflow fulfillment library Actions on Google client library v2 integration sample
+    function getRandomList() {
+        return LISTS[Math.floor(Math.random() * LISTS.length)];
+    }
 
     // Run the proper function handler based on the matched Dialogflow intent name
     let intentMap = new Map();
